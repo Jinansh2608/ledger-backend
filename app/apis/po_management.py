@@ -525,6 +525,7 @@ def get_aggregated_pos_by_store(client_id: int = Query(None)):
                             cp.receivable_amount,
                             cp.status,
                             cp.created_at,
+                            cp.store_id,
                             c.name as client_name,
                             p.name as project_name
                         FROM client_po cp
@@ -551,7 +552,7 @@ def get_aggregated_pos_by_store(client_id: int = Query(None)):
                             "status": row["status"],
                             "created_at": row["created_at"],
                             "po_ids": [row["id"]],  # Single PO
-                            "store_id": None,
+                            "store_id": row["store_id"],
                             "is_bundled": False
                         }
                         bundles.append(bundle)

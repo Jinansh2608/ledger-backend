@@ -222,6 +222,7 @@ async def upload_file(
 async def upload_and_parse_po(
     client_id: int = Query(..., ge=1, description="Client ID (Bajaj=1, Dava India=2)"),
     project_id: Optional[int] = Query(None, description="Optional Project ID to link PO"),
+    project_name: Optional[str] = Query(None, description="Optional Project Name to link/create"),
     request_obj: Request = None,
     file: UploadFile = File(...),
     uploaded_by: Optional[str] = Query(None),
@@ -287,7 +288,7 @@ async def upload_and_parse_po(
             if auto_save and parsed_data:
                 try:
                     # Insert into business database
-                    client_po_id = insert_client_po(parsed_data, client_id, project_id)
+                    client_po_id = insert_client_po(parsed_data, client_id, project_id, project_name)
                     print(f"✅ Successfully inserted PO into database with ID: {client_po_id}")
                 except ValueError as validation_error:
                     # Validation error - log but return it in response
