@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 def print_startup_info():
     """Print startup information"""
     print("\n" + "="*70)
-    print("  🚀 NexGen Finance API - Starting")
+    print("  >> NexGen Finance API - Starting")
     print("="*70)
     print(f"  Port:        http://localhost:8000")
     print(f"  API Docs:    http://localhost:8000/api/docs")
@@ -28,13 +28,13 @@ def print_startup_info():
     print(f"  Error Logs:  logs/error.log (rotated max 10MB)")
     print(f"  Console:     Shows INFO level and above")
     print("="*70)
-    print("\n📌 API Endpoints Available:")
+    print("\n[*] API Endpoints Available:")
     print("  • GET  /api/health              - Health check")
     print("  • GET  /api/projects            - List projects")
     print("  • GET  /api/vendors             - List vendors")
     print("  • POST /api/projects            - Create project")
     print("  • POST /api/vendors             - Create vendor")
-    print("\n📋 View all endpoints at: http://localhost:8000/api/docs\n")
+    print("\n[+] View all endpoints at: http://localhost:8000/api/docs\n")
 
 if __name__ == "__main__":
     # Check for verbose flag
@@ -60,8 +60,8 @@ if __name__ == "__main__":
             use_colors=True   # Use colored output
         )
     except KeyboardInterrupt:
-        logger.info("\n⏹️  Server stopped by user")
+        logger.info("\n[X] Server stopped by user")
         sys.exit(0)
     except Exception as e:
-        logger.error(f"❌ Server error: {e}", exc_info=True)
+        logger.error(f"[ERROR] Server error: {e}", exc_info=True)
         sys.exit(1)
