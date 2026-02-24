@@ -1,0 +1,1900 @@
+{
+  "info": {
+    "name": "Nexgen Finances Backend API",
+    "description": "Complete testing collection for Nexgen Finances Backend with all endpoints, test cases, and validations",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health & Connectivity",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Health check returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has status field', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('status');",
+                  "  pm.expect(jsonData.status).to.equal('healthy');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Database Connection",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/health/db",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "health",
+                "db"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Database connection returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Database is connected', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData.database).to.equal('connected');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PO Management",
+      "item": [
+        {
+          "name": "Get All POs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/po?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "po"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get all POs returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is array', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Single PO",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/po/14",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "po",
+                "14"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get single PO returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('PO has required fields', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('po_id');",
+                  "  pm.expect(jsonData).to.have.property('po_number');",
+                  "  pm.expect(jsonData).to.have.property('status');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get PO Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/po/14/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "po",
+                "14",
+                "payments"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get PO payments returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Payments have required fields', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  if (jsonData.length > 0) {",
+                  "    pm.expect(jsonData[0]).to.have.property('payment_id');",
+                  "    pm.expect(jsonData[0]).to.have.property('po_id');",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Client PO Management",
+      "item": [
+        {
+          "name": "Get All Client POs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/client-po?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "client-po"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get all client POs returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Client PO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"client_name\": \"ABC Manufacturing\",\n  \"po_number\": \"CLIENT-PO-2026-001\",\n  \"po_date\": \"2026-02-10\",\n  \"po_value\": 50000,\n  \"po_currency\": \"INR\",\n  \"status\": \"ACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/client-po",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "client-po"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Create client PO returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has po_id', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('po_id');",
+                  "  pm.collectionVariables.set('client_po_id', jsonData.po_id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Get All Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/payments?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get all payments returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Single Payment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/payments/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get single payment returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Payment has required fields', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('payment_id');",
+                  "  pm.expect(jsonData).to.have.property('amount');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"po_id\": 14,\n  \"amount\": 5000,\n  \"payment_date\": \"2026-02-10\",\n  \"payment_method\": \"BANK_TRANSFER\",\n  \"reference_number\": \"TXN-2026-001\",\n  \"payment_stage\": \"PARTIAL\",\n  \"notes\": \"First installment\",\n  \"is_tds_deducted\": false,\n  \"tds_amount\": 0,\n  \"received_by_account\": \"MAIN_ACCOUNT\",\n  \"transaction_type\": \"CREDIT\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Create payment returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Vendors",
+      "item": [
+        {
+          "name": "Get All Vendors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendors?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vendors"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get all vendors returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Single Vendor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendors/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vendors",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get single vendor returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Vendor has required fields', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('vendor_id');",
+                  "  pm.expect(jsonData).to.have.property('vendor_name');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Vendor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vendor_name\": \"New Vendor Corp\",\n  \"vendor_code\": \"VENDOR-001\",\n  \"contact_person\": \"John Doe\",\n  \"email\": \"john@vendor.com\",\n  \"phone\": \"+91-9876543210\",\n  \"address\": \"123 Business St\",\n  \"city\": \"Delhi\",\n  \"state\": \"Delhi\",\n  \"country\": \"India\",\n  \"pincode\": \"110001\",\n  \"gst_number\": \"18AABCT2345F1Z5\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vendors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vendors"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Create vendor returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Vendor Orders",
+      "item": [
+        {
+          "name": "Get All Vendor Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendor-orders?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vendor-orders"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get all vendor orders returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Single Vendor Order",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendor-orders/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vendor-orders",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get single vendor order returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Vendor Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vendor_id\": 1,\n  \"order_number\": \"VO-2026-001\",\n  \"order_date\": \"2026-02-10\",\n  \"order_value\": 100000,\n  \"currency\": \"INR\",\n  \"status\": \"PENDING\",\n  \"expected_delivery\": \"2026-03-10\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vendor-orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vendor-orders"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Create vendor order returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "File Uploads",
+      "item": [
+        {
+          "name": "Create Upload Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"metadata\": {\n    \"project\": \"PO-2026-001\",\n    \"department\": \"Finance\"\n  },\n  \"ttl_hours\": 24\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "session"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Create upload session returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has session_id', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('session_id');",
+                  "  pm.collectionVariables.set('session_id', jsonData.session_id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Files by PO Number",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/uploads/po/PO-2026-001/files?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "po",
+                "PO-2026-001",
+                "files"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get PO files returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has required fields', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('status');",
+                  "  pm.expect(jsonData).to.have.property('po_number');",
+                  "  pm.expect(jsonData).to.have.property('file_count');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get PO Compression Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/uploads/po/PO-2026-001/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "po",
+                "PO-2026-001",
+                "stats"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get PO stats returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Session Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/{{session_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "session",
+                "{{session_id}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get session details returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PO Upload via Excel",
+      "item": [
+        {
+          "name": "1. Create Upload Session for Bajaj PO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"metadata\": {\n    \"client\": \"Bajaj\",\n    \"po_type\": \"purchase_order\",\n    \"source\": \"excel_upload\"\n  },\n  \"ttl_hours\": 24\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "session"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Create session returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Save Bajaj session ID', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.collectionVariables.set('bajaj_session_id', jsonData.session_id);",
+                  "  pm.expect(jsonData).to.have.property('session_id');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Upload Bajaj PO Excel File",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/Bajaj_PO_2026.xlsx",
+                  "disabled": false
+                },
+                {
+                  "key": "uploaded_by",
+                  "value": "finance_team",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/{{bajaj_session_id}}/files",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "session",
+                "{{bajaj_session_id}}",
+                "files"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('File upload returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Upload returns file ID', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('file_id');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Create Upload Session for Dava India PO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"metadata\": {\n    \"client\": \"Dava India\",\n    \"po_type\": \"purchase_order\",\n    \"source\": \"excel_upload\"\n  },\n  \"ttl_hours\": 24\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "session"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Create session returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Save Dava India session ID', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.collectionVariables.set('dava_session_id', jsonData.session_id);",
+                  "  pm.expect(jsonData).to.have.property('session_id');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. Upload Dava India PO Excel File",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/Dava_India_PO_2026.xlsx",
+                  "disabled": false
+                },
+                {
+                  "key": "uploaded_by",
+                  "value": "finance_team",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/{{dava_session_id}}/files",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "session",
+                "{{dava_session_id}}",
+                "files"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('File upload returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Upload returns file ID', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('file_id');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Get Bajaj PO Files from Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/{{bajaj_session_id}}?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "session",
+                "{{bajaj_session_id}}"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get files returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains files array', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('files');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6. Get Dava India PO Files from Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/{{dava_session_id}}?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "session",
+                "{{dava_session_id}}"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get files returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains files array', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('files');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7. List All POs (After Upload)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/po?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "po"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get POs returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is array', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8. Quick Upload with Auto-Parse (Bajaj)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/Bajaj_PO.xlsx",
+                  "disabled": false
+                },
+                {
+                  "key": "uploaded_by",
+                  "value": "auto_test_user",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/uploads/po/upload?client_id=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "po",
+                "upload"
+              ],
+              "query": [
+                {
+                  "key": "client_id",
+                  "value": "1",
+                  "description": "Client ID: 1=Bajaj, 2=Dava India"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Auto-parse upload returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains parsed PO data', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('status');",
+                  "  pm.expect(jsonData).to.have.property('file_id');",
+                  "  pm.expect(jsonData).to.have.property('po_details');",
+                  "  pm.expect(jsonData).to.have.property('line_items');",
+                  "});",
+                  "",
+                  "pm.test('Client name is Bajaj', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData.client_name).to.equal('Bajaj');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "9. Quick Upload with Auto-Parse (Dava India)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/Dava_India_Proforma_Invoice.xlsx",
+                  "disabled": false
+                },
+                {
+                  "key": "uploaded_by",
+                  "value": "auto_test_user",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/uploads/po/upload?client_id=2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "uploads",
+                "po",
+                "upload"
+              ],
+              "query": [
+                {
+                  "key": "client_id",
+                  "value": "2",
+                  "description": "Client ID: 1=Bajaj, 2=Dava India"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Auto-parse upload returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains parsed data', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData).to.have.property('status');",
+                  "  pm.expect(jsonData).to.have.property('file_id');",
+                  "  pm.expect(jsonData).to.have.property('po_details');",
+                  "  pm.expect(jsonData).to.have.property('line_items');",
+                  "});",
+                  "",
+                  "pm.test('Client name is Dava India', function () {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.expect(jsonData.client_name).to.equal('Dava India');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Get All Documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/documents?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "documents"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get all documents returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Single Document",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/documents/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "documents",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get single document returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"po_id\": 14,\n  \"document_type\": \"INVOICE\",\n  \"document_number\": \"INV-2026-001\",\n  \"document_date\": \"2026-02-10\",\n  \"file_path\": \"/uploads/documents/inv_2026_001.pdf\",\n  \"file_size\": 102400,\n  \"file_hash\": \"abc123def456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/documents",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "documents"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Create document returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Proforma Invoices",
+      "item": [
+        {
+          "name": "Get All Proforma Invoices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/proforma-invoices?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "proforma-invoices"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get all proforma invoices returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Proforma Invoice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vendor_id\": 1,\n  \"invoice_number\": \"PFI-2026-001\",\n  \"invoice_date\": \"2026-02-10\",\n  \"vendor_name\": \"ABC Corp\",\n  \"vendor_address\": \"123 Business St, Delhi\",\n  \"amount\": 50000,\n  \"currency\": \"INR\",\n  \"items\": [\n    {\n      \"description\": \"Raw Materials\",\n      \"quantity\": 100,\n      \"unit_price\": 500,\n      \"total\": 50000\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/proforma-invoices",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "proforma-invoices"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Create proforma invoice returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Vendor Payments",
+      "item": [
+        {
+          "name": "Get All Vendor Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendor-payments?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vendor-payments"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get all vendor payments returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Single Vendor Payment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendor-payments/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vendor-payments",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get single vendor payment returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Vendor Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vendor_id\": 1,\n  \"payment_amount\": 25000,\n  \"payment_date\": \"2026-02-10\",\n  \"payment_method\": \"BANK_TRANSFER\",\n  \"reference_number\": \"VPAY-2026-001\",\n  \"status\": \"PENDING\",\n  \"notes\": \"Payment for VO-2026-001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vendor-payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vendor-payments"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Create vendor payment returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bajaj PO",
+      "item": [
+        {
+          "name": "Get All Bajaj POs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/bajaj-po?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "bajaj-po"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get all Bajaj POs returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Bajaj PO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"po_number\": \"BAJAJ-2026-001\",\n  \"po_date\": \"2026-02-10\",\n  \"vendor_id\": 1,\n  \"po_value\": 150000,\n  \"currency\": \"INR\",\n  \"items\": [\n    {\n      \"description\": \"Machine Parts\",\n      \"quantity\": 50,\n      \"unit_price\": 3000\n    }\n  ],\n  \"delivery_date\": \"2026-03-10\",\n  \"payment_terms\": \"30 days\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/bajaj-po",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "bajaj-po"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Create Bajaj PO returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Vendor Payment Links",
+      "item": [
+        {
+          "name": "Get Vendor Payment Links",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendor-payment-links?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vendor-payment-links"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get vendor payment links returns 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PO Management Advanced",
+      "item": [
+        {
+          "name": "Get Enriched POs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/po/enriched?skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "po",
+                "enriched"
+              ],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get enriched POs returns 200 or 501', function () {",
+                  "  pm.expect([200, 501]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search Vendor Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendor-orders/search?query=VO-2026&skip=0&limit=50",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "vendor-orders",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "VO-2026"
+                },
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Search vendor orders returns 200 or 501', function () {",
+                  "  pm.expect([200, 501]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Profit Analysis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/po/analysis/profit?start_date=2026-01-01&end_date=2026-12-31",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "po",
+                "analysis",
+                "profit"
+              ],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "2026-01-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-12-31"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get profit analysis returns 200 or 501', function () {",
+                  "  pm.expect([200, 501]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "session_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "client_po_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

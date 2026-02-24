@@ -1,0 +1,271 @@
+# Quick Reference - Nexgen ERP Finance API
+
+## Startup Commands
+
+### Development
+```bash
+python run.py
+# or
+python -m uvicorn app.main:app --reload
+```
+
+### Production
+```bash
+# Single worker (testing)
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 app.main:app
+
+# Multiple workers with systemd (see DEPLOYMENT_GUIDE.md)
+gunicorn -w 10 -k uvicorn.workers.UvicornWorker app.main:app
+```
+
+## Environment Setup
+
+```bash
+# 1. Copy environment template
+cp .env.example .env
+
+# 2. Edit configuration
+nano .env
+
+# Required variables to change:
+# - DB_HOST (if not localhost)
+# - DB_PASSWORD (secure password)
+# - SECRET_KEY (generate: openssl rand -hex 32)
+# - CORS_ORIGINS (your frontend domain)
+# - APP_ENVIRONMENT (development/staging/production)
+
+# 3. Create logs directory
+mkdir -p logs
+
+# 4. Install dependencies
+pip install -r requirements.txt
+```
+
+## API Endpoints
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/api/health` | Basic health check |
+| GET | `/api/health/detailed` | Detailed system status |
+| GET | `/api/docs` | Swagger API documentation |
+| GET | `/api/redoc` | ReDoc API documentation |
+
+**Additional endpoints** available for:
+- Purchase Orders
+- Vendors
+- Payments  
+- File Uploads
+- Projects
+
+See API documentation at `/api/docs` for complete list.
+
+## Configuration Variables
+
+### Database
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=Nexgen_erp
+DB_USER=postgres
+DB_PASSWORD=secure_password
+DB_SCHEMA=Finances
+DB_POOL_SIZE=20          # Concurrent connections
+DB_MAX_OVERFLOW=40       # Extra connections allowed
+DB_POOL_TIMEOUT=30       # Seconds to wait for connection
+```
+
+### Application
+```env
+APP_ENVIRONMENT=production  # development/staging/production
+DEBUG_MODE=false           # Never true in production!
+LOG_LEVEL=WARNING          # DEBUG, INFO, WARNING, ERROR, CRITICAL
+```
+
+### Security
+```env
+SECRET_KEY=your-256-bit-hex-key  # Generate with: openssl rand -hex 32
+CORS_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+```
+
+## Monitoring
+
+### Health Check
+```bash
+# Local
+curl http://localhost:8000/api/health
+
+# Remote  
+curl https://api.yourdomain.com/api/health
+```
+
+### Expected Response
+```json
+{
+  "status": "UP",
+  "service": "Nexgen ERP - Finance API",
+  "database": "UP",
+  "version": "1.0.0",
+  "timestamp": "2026-02-17T00:31:00"
+}
+```
+
+### View Logs
+```bash
+# Application events
+tail -f logs/app.log
+
+# Error logs only
+tail -f logs/error.log
+
+# Search for errors
+grep ERROR logs/app.log
+
+# JSON format makes search/parsing easy
+```
+
+## Troubleshooting
+
+### Port Already in Use
+```bash
+# Check what's using port 8000
+lsof -i :8000
+
+# Kill process
+kill -9 <PID>
+```
+
+### Database Connection Failed
+```bash
+# Verify PostgreSQL is running
+psql -h localhost -U postgres -d Nexgen_erp -c "SELECT 1"
+
+# Check .env variables
+grep DB_ .env
+
+# Test with python
+python -c "from app.database import init_connection_pool; init_connection_pool()"
+```
+
+### High Memory Usage
+```bash
+# Check process
+ps aux | grep gunicorn
+
+# Check database connections
+psql -d Nexgen_erp -c "SELECT COUNT(*) FROM pg_stat_activity;"
+
+# Reduce workers if needed
+# Edit systemd service or gunicorn command
+```
+
+### SSL/TLS Not Working
+```bash
+# Test without SSL first
+curl http://localhost:8000/api/health
+
+# Then through nginx/reverse proxy
+curl https://api.yourdomain.com/api/health
+
+# Check certificate
+openssl x509 -in /etc/letsencrypt/live/yourdomain.com/fullchain.pem -text -noout
+```
+
+## Performance Tuning
+
+### Optimal Worker Count
+For N CPU cores, use 2N+1 workers:
+- 1 core → 3 workers
+- 2 cores → 5 workers
+- 4 cores → 9 workers
+- 8 cores → 17 workers
+
+```bash
+gunicorn --workers 9 app.main:app
+```
+
+### Connection Pool Sizing
+For concurrent API calls:
+- Light load: `DB_POOL_SIZE=10`
+- Medium load: `DB_POOL_SIZE=20`
+- Heavy load: `DB_POOL_SIZE=50`
+
+### Nginx Caching
+Enable HTTP caching:
+```nginx
+proxy_cache_valid 200 10m;
+expires 1d;
+```
+
+## Security Checklist
+
+- [ ] Changed SECRET_KEY from default
+- [ ] Database password is strong
+- [ ] DEBUG_MODE=false in production
+- [ ] CORS_ORIGINS has no wildcards
+- [ ] SSL/TLS certificates installed
+- [ ] HTTP redirect to HTTPS enabled
+- [ ] Database backups configured
+- [ ] Firewall rules applied
+- [ ] Monitoring alerts set up
+- [ ] Log aggregation configured
+
+## Common Tasks
+
+### Update Dependencies
+```bash
+pip install --upgrade -r requirements.txt
+```
+
+### Database Backup
+```bash
+# Manual backup
+pg_dump -h localhost -U postgres -d Nexgen_erp > backup.sql
+
+# Compressed backup
+pg_dump -h localhost -U postgres -d Nexgen_erp | gzip > backup.sql.gz
+
+# Restore from backup
+psql -h localhost -U postgres -d Nexgen_erp < backup.sql
+```
+
+### View Active Connections
+```bash
+# PostgreSQL
+psql -d Nexgen_erp -c "SELECT COUNT(*) FROM pg_stat_activity;"
+
+# Details
+psql -d Nexgen_erp -c "SELECT usename, state, query FROM pg_stat_activity;"
+```
+
+### Generate New SECRET_KEY
+```bash
+openssl rand -hex 32
+# Output: 3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f
+```
+
+## Support Resources
+
+- **Full Documentation**: See README_PRODUCTION.md
+- **Deployment Guide**: See DEPLOYMENT_GUIDE.md
+- **Pre-Deployment Checklist**: See PRODUCTION_CHECKLIST.md
+- **API Files**:
+  - Health checks: `app/apis/health.py`
+  - Client POs: `app/apis/client_po.py`
+  - Vendors: `app/apis/vendors.py`
+  - Payments: `app/apis/payments.py`
+  - File uploads: `app/modules/file_uploads/`
+
+## Emergency Contacts
+
+For production issues:
+1. Check logs: `tail -f logs/error.log`
+2. Review monitoring dashboards
+3. Read DEPLOYMENT_GUIDE.md troubleshooting section
+4. Contact DevOps team
+5. Escalate to Senior Backend Engineer if needed
+
+---
+
+**Last Updated**: February 17, 2026  
+**Version**: 1.0  
+**Status**: ✅ Production Ready

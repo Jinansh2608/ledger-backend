@@ -1,0 +1,309 @@
+{
+  "_postman_id": "nexgen-finance-backend",
+  "info": {
+    "_postman_id": "nexgen-finance-backend",
+    "name": "Nexgen Finance - Backend API (Critical Routes)",
+    "description": "Essential routes for file upload, parsing, and PO management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Session Management",
+      "item": [
+        {
+          "name": "1. Create Upload Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"client_id\": 1,\n  \"metadata\": {\n    \"project_id\": 3,\n    \"upload_type\": \"po\",\n    \"description\": \"Bajaj PO upload for Project 01587\"\n  },\n  \"ttl_hours\": 24\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/uploads/session",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "uploads", "session"]
+            },
+            "description": "Creates a new upload session for a specific client. Returns session_id to use in subsequent uploads."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get Session Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/uploads/session/{{session_id}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "uploads", "session", "{{session_id}}"]
+            },
+            "description": "Get details of a specific upload session including file count and metadata."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Delete Session",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/uploads/session/{{session_id}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "uploads", "session", "{{session_id}}"]
+            },
+            "description": "Delete an entire session and all its files (soft delete)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "File Upload & Parsing",
+      "item": [
+        {
+          "name": "1. Upload File to Session (Auto-Parse)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/bajaj_po.xlsx",
+                  "description": "Excel file to upload"
+                },
+                {
+                  "key": "uploaded_by",
+                  "value": "admin@nexgen.com",
+                  "type": "text"
+                },
+                {
+                  "key": "po_number",
+                  "value": "PO-2024-001",
+                  "type": "text"
+                },
+                {
+                  "key": "auto_parse",
+                  "value": "true",
+                  "type": "text",
+                  "description": "Enable auto-parsing if client_id in session"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/uploads/session/{{session_id}}/files",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "uploads", "session", "{{session_id}}", "files"]
+            },
+            "description": "Upload a file to a session. If client_id is in session metadata, file will be auto-parsed using client-specific parser."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Direct PO Upload & Parse (Recommended)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/bajaj_po.xlsx",
+                  "description": "Bajaj PO Excel file"
+                },
+                {
+                  "key": "uploaded_by",
+                  "value": "admin@nexgen.com",
+                  "type": "text"
+                },
+                {
+                  "key": "auto_save",
+                  "value": "true",
+                  "type": "text",
+                  "description": "Automatically save parsed PO to database"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/uploads/po/upload?client_id=1&project_id=3",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "uploads", "po", "upload"],
+              "query": [
+                {
+                  "key": "client_id",
+                  "value": "1",
+                  "description": "Client ID (1=Bajaj, 2=Dava India)"
+                },
+                {
+                  "key": "project_id",
+                  "value": "3",
+                  "description": "Optional project ID to link PO"
+                }
+              ]
+            },
+            "description": "Upload and automatically parse a PO file. Returns parsed PO data with line items. PRIMARY ENDPOINT FOR PO UPLOADS."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "File Management",
+      "item": [
+        {
+          "name": "1. List Session Files",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/uploads/session/{{session_id}}/files?skip=0&limit=50",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "uploads", "session", "{{session_id}}", "files"],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0",
+                  "description": "Pagination offset"
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Pagination limit"
+                }
+              ]
+            },
+            "description": "List all files in a session with pagination support."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Download File",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/uploads/session/{{session_id}}/files/{{file_id}}/download",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "uploads", "session", "{{session_id}}", "files", "{{file_id}}", "download"]
+            },
+            "description": "Download a file from a session. Returns file as binary stream."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Delete File",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/uploads/session/{{session_id}}/files/{{file_id}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "uploads", "session", "{{session_id}}", "files", "{{file_id}}"]
+            },
+            "description": "Delete a file from a session (soft delete)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bulk Operations",
+      "item": [
+        {
+          "name": "1. Bulk Upload Bajaj POs",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": [
+                    "/path/to/po1.xlsx",
+                    "/path/to/po2.xlsx"
+                  ],
+                  "description": "Multiple Excel files"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/bajaj-po/bulk?client_id=1&project_id=3",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "bajaj-po", "bulk"],
+              "query": [
+                {
+                  "key": "client_id",
+                  "value": "1",
+                  "description": "Client ID (1=Bajaj)"
+                },
+                {
+                  "key": "project_id",
+                  "value": "3",
+                  "description": "Optional project ID"
+                }
+              ]
+            },
+            "description": "Upload multiple Bajaj PO files at once. Returns aggregate results."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "session_id",
+      "value": "{{$randomUUID}}",
+      "type": "string",
+      "description": "Session ID - Get from Create Session response"
+    },
+    {
+      "key": "file_id",
+      "value": "{{$randomUUID}}",
+      "type": "string",
+      "description": "File ID - Get from Upload File or List Files response"
+    },
+    {
+      "key": "client_id",
+      "value": "1",
+      "type": "string",
+      "description": "Client ID: 1=Bajaj, 2=Dava India"
+    },
+    {
+      "key": "project_id",
+      "value": "3",
+      "type": "string",
+      "description": "Project ID from database"
+    }
+  ]
+}

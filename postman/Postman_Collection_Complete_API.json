@@ -1,0 +1,1327 @@
+{
+  "info": {
+    "name": "Nexgen ERP Finance - Complete API",
+    "description": "Complete API testing collection for Nexgen Finance Backend with all 50+ routes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "🔵 Health & Status",
+      "item": [
+        {
+          "name": "Get Health Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Detailed Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/detailed",
+              "host": ["{{base_url}}"],
+              "path": ["health", "detailed"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔵 Clients",
+      "item": [
+        {
+          "name": "Get Supported Clients",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response has clients', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.clients).to.be.an('array');",
+                  "    pm.expect(jsonData.data.clients.length).to.be.greaterThan(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/clients",
+              "host": ["{{base_url}}"],
+              "path": ["clients"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📤 File Upload & Sessions",
+      "item": [
+        {
+          "name": "Create Upload Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"po_number\": \"PO-2026-001\",\n  \"created_by\": \"user@example.com\",\n  \"description\": \"Monthly PO batch\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/uploads/session",
+              "host": ["{{base_url}}"],
+              "path": ["uploads", "session"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Session Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/uploads/session/{{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["uploads", "session", "{{session_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Session Files",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/uploads/session/{{session_id}}/files?skip=0&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["uploads", "session", "{{session_id}}", "files"],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload File to Session",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                },
+                {
+                  "key": "uploaded_by",
+                  "value": "user@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "po_number",
+                  "value": "PO-2026-001",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/uploads/session/{{session_id}}/files",
+              "host": ["{{base_url}}"],
+              "path": ["uploads", "session", "{{session_id}}", "files"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete File",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/uploads/session/{{session_id}}/files/{{file_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["uploads", "session", "{{session_id}}", "files", "{{file_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Session",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/uploads/session/{{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["uploads", "session", "{{session_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📋 Purchase Orders (PO)",
+      "item": [
+        {
+          "name": "Upload & Parse PO (Bajaj - client_id=1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('po_id', jsonData.data.client_po_id);",
+                  "    pm.test('PO Created Successfully', function () {",
+                  "        pm.expect(jsonData.data.parsing_status).to.equal('completed');",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/po/upload?client_id=1&project_id=1&auto_save=true",
+              "host": ["{{base_url}}"],
+              "path": ["po", "upload"],
+              "query": [
+                {
+                  "key": "client_id",
+                  "value": "1"
+                },
+                {
+                  "key": "project_id",
+                  "value": "1"
+                },
+                {
+                  "key": "auto_save",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload & Parse PO (Dava India - client_id=2)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/po/upload?client_id=2&project_id=1&auto_save=true",
+              "host": ["{{base_url}}"],
+              "path": ["po", "upload"],
+              "query": [
+                {
+                  "key": "client_id",
+                  "value": "2"
+                },
+                {
+                  "key": "project_id",
+                  "value": "1"
+                },
+                {
+                  "key": "auto_save",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All POs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/po?skip=0&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["po"],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get PO Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/client-po/{{po_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["client-po", "{{po_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create PO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"po_number\": \"BJ-2026-002\",\n  \"po_date\": \"2026-02-16\",\n  \"po_value\": 250000,\n  \"vendor_name\": \"Supplier Ltd\",\n  \"client_id\": 1,\n  \"description\": \"Monthly order\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/po",
+              "host": ["{{base_url}}"],
+              "path": ["po"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update PO",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"po_number\": \"BJ-2026-002\",\n  \"po_value\": 275000,\n  \"status\": \"completed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/po/{{po_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["po", "{{po_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete PO",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/po/{{po_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["po", "{{po_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📄 Line Items",
+      "item": [
+        {
+          "name": "Add Line Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Steel Rods\",\n  \"quantity\": 50,\n  \"unit_price\": 1000,\n  \"amount\": 50000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/po/{{po_id}}/line-items",
+              "host": ["{{base_url}}"],
+              "path": ["po", "{{po_id}}", "line-items"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Line Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/po/{{po_id}}/line-items",
+              "host": ["{{base_url}}"],
+              "path": ["po", "{{po_id}}", "line-items"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Line Item",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 75,\n  \"amount\": 75000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/line-items/{{line_item_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["line-items", "{{line_item_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Line Item",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/line-items/{{line_item_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["line-items", "{{line_item_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🏢 Projects",
+      "item": [
+        {
+          "name": "Get All Projects",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data.projects && jsonData.data.projects.length > 0) {",
+                  "        pm.environment.set('project_id', jsonData.data.projects[0].id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/projects?skip=0&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["projects"],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('project_id', jsonData.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Delhi Warehouse\",\n  \"client_id\": 5,\n  \"location\": \"Noida\",\n  \"city\": \"Delhi\",\n  \"state\": \"Delhi\",\n  \"latitude\": 28.5355,\n  \"longitude\": 77.3910\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/projects",
+              "host": ["{{base_url}}"],
+              "path": ["projects"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Delhi Warehouse Phase 2\",\n  \"status\": \"on-hold\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project POs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}/po",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "po"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Project PO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"po_number\": \"PROJ-2026-001\",\n  \"po_date\": \"2026-02-16\",\n  \"po_value\": 300000,\n  \"vendor_name\": \"Vendor Name\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}/po",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "po"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Financial Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}/financial-summary",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "financial-summary"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/projects/search?q=Mumbai",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Mumbai"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👥 Vendors",
+      "item": [
+        {
+          "name": "Get All Vendors",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data.vendors && jsonData.data.vendors.length > 0) {",
+                  "        pm.environment.set('vendor_id', jsonData.data.vendors[0].id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vendors?status=active",
+              "host": ["{{base_url}}"],
+              "path": ["vendors"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "active"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Vendor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('vendor_id', jsonData.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"XYZ Ltd\",\n  \"email\": \"info@xyz.com\",\n  \"phone\": \"+91-8765432109\",\n  \"address\": \"Delhi\",\n  \"payment_terms\": \"Net 45\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vendors",
+              "host": ["{{base_url}}"],
+              "path": ["vendors"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vendor Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vendors/{{vendor_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vendors", "{{vendor_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Vendor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+91-7654321098\",\n  \"payment_terms\": \"Net 60\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vendors/{{vendor_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vendors", "{{vendor_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Vendor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vendors/{{vendor_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vendors", "{{vendor_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vendor Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vendors/{{vendor_id}}/payments",
+              "host": ["{{base_url}}"],
+              "path": ["vendors", "{{vendor_id}}", "payments"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📦 Vendor Orders",
+      "item": [
+        {
+          "name": "Create Vendor Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('vendor_order_id', jsonData.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vendor_id\": \"{{vendor_id}}\",\n  \"po_number\": \"VO-2026-001\",\n  \"amount\": 50000,\n  \"description\": \"Material supply\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}/vendor-orders",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "vendor-orders"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Vendor Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}/vendor-orders",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "vendor-orders"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vendor Order Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vendor-orders/{{vendor_order_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["vendor-orders", "{{vendor_order_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Vendor Order",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 60000,\n  \"description\": \"Updated supply\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}/vendor-orders/{{vendor_order_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "vendor-orders", "{{vendor_order_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Vendor Order Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vendor-orders/{{vendor_order_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["vendor-orders", "{{vendor_order_id}}", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Vendor Order",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}/vendor-orders/{{vendor_order_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "vendor-orders", "{{vendor_order_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Vendor Order Line Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Steel Beams\",\n  \"quantity\": 25,\n  \"unit_price\": 2000,\n  \"amount\": 50000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/vendor-orders/{{vendor_order_id}}/line-items",
+              "host": ["{{base_url}}"],
+              "path": ["vendor-orders", "{{vendor_order_id}}", "line-items"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💰 Payments",
+      "item": [
+        {
+          "name": "Create Payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('payment_id', jsonData.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 100000,\n  \"payment_date\": \"2026-02-17\",\n  \"payment_method\": \"Bank Transfer\",\n  \"reference_number\": \"TXN-12345\",\n  \"notes\": \"50% advance\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/po/{{po_id}}/payments",
+              "host": ["{{base_url}}"],
+              "path": ["po", "{{po_id}}", "payments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get PO Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/po/{{po_id}}/payments",
+              "host": ["{{base_url}}"],
+              "path": ["po", "{{po_id}}", "payments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Payment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 110000,\n  \"status\": \"failed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/{{payment_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "{{payment_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Payment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments/{{payment_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "{{payment_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📊 Billing POs",
+      "item": [
+        {
+          "name": "Create Billing PO",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('billing_po_id', jsonData.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"po_number\": \"BILL-2026-001\",\n  \"amount\": 450000,\n  \"status\": \"pending\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}/billing-po",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "billing-po"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Billing PO Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/billing-po/{{billing_po_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["billing-po", "{{billing_po_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Billing Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}/billing-summary",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "billing-summary"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Billing Line Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_description\": \"Labour Cost - Phase 1\",\n  \"quantity\": 1,\n  \"unit_price\": 450000,\n  \"amount\": 450000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/billing-po/{{billing_po_id}}/line-items",
+              "host": ["{{base_url}}"],
+              "path": ["billing-po", "{{billing_po_id}}", "line-items"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Billing Line Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/billing-po/{{billing_po_id}}/line-items",
+              "host": ["{{base_url}}"],
+              "path": ["billing-po", "{{billing_po_id}}", "line-items"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Billing PO",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"po_number\": \"BILL-2026-001-REV\",\n  \"amount\": 500000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/billing-po/{{billing_po_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["billing-po", "{{billing_po_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Billing PO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"approved_by\": \"manager@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/billing-po/{{billing_po_id}}/approve",
+              "host": ["{{base_url}}"],
+              "path": ["billing-po", "{{billing_po_id}}", "approve"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project P&L Analysis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}/billing-pl-analysis",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "billing-pl-analysis"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📁 Documents",
+      "item": [
+        {
+          "name": "Upload Document",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                },
+                {
+                  "key": "project_id",
+                  "value": "{{project_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Invoice copy",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/documents/upload",
+              "host": ["{{base_url}}"],
+              "path": ["documents", "upload"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/documents/project/{{project_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["documents", "project", "{{project_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get PO Documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/documents/po/{{po_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["documents", "po", "{{po_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Document Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/documents/{{doc_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["documents", "{{doc_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Download Document",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/documents/download/{{doc_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["documents", "download", "{{doc_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "project_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "po_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "vendor_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "vendor_order_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "payment_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "billing_po_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "session_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "file_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "doc_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "line_item_id",
+      "value": "1",
+      "type": "string"
+    }
+  ]
+}

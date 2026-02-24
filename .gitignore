@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+.env.*
+
+# Virtual env
+venv/
+.env/
+
+# Editor temp
+.vscode/
+.idea/
+
+# Uploads and runtime
+uploads/
+*.sqlite3
+
+# Byte-compiled / cache
+*.pyc
+
+# Migrations
+migrations/*.pyc
+
+# Postman collections (optionally)
+*.postman_collection.json

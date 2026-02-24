@@ -1,0 +1,1031 @@
+{
+  "info": {
+    "_postman_id": "nexgen-financeapi-backend",
+    "name": "Nexgen Finance Backend API - Complete",
+    "description": "Complete test collection for all Nexgen Finance Backend API routes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health & Status",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Basic health check - returns API and database status"
+          },
+          "response": []
+        },
+        {
+          "name": "Detailed Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/health/detailed",
+              "host": ["{{base_url}}"],
+              "path": ["api", "health", "detailed"]
+            },
+            "description": "Detailed health check with metrics and component status"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "Get Supported Clients",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/clients",
+              "host": ["{{base_url}}"],
+              "path": ["api", "clients"]
+            },
+            "description": "Get list of supported clients for PO parsing (Bajaj, Dava India)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "Get All Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects?skip=0&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects"],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Get all projects with pagination"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1"]
+            },
+            "description": "Get specific project details"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Project\",\n  \"location\": \"Mumbai\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"country\": \"India\",\n  \"latitude\": 19.0760,\n  \"longitude\": 72.8777\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects"]
+            },
+            "description": "Create a new project"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Project Name\",\n  \"status\": \"Active\",\n  \"city\": \"Bangalore\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1"]
+            },
+            "description": "Update project details"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1"]
+            },
+            "description": "Delete a project"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Client PO",
+      "item": [
+        {
+          "name": "Get Client PO by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/client-po/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "client-po", "1"]
+            },
+            "description": "Get client PO details with line items"
+          },
+          "response": []
+        },
+        {
+          "name": "Upload and Parse PO",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/BAJAJ_PO.xlsx"
+                },
+                {
+                  "key": "client_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "project_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "uploaded_by",
+                  "value": "admin",
+                  "type": "text"
+                },
+                {
+                  "key": "auto_save",
+                  "value": "true",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/po/upload?client_id=1&project_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "po", "upload"],
+              "query": [
+                {
+                  "key": "client_id",
+                  "value": "1"
+                },
+                {
+                  "key": "project_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Upload Excel file and auto-parse based on client"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Vendors",
+      "item": [
+        {
+          "name": "Create Vendor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vendor Name\",\n  \"contact_person\": \"John Doe\",\n  \"email\": \"john@vendor.com\",\n  \"phone\": \"9876543210\",\n  \"address\": \"123 Business Street\",\n  \"payment_terms\": \"30 days\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vendors",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendors"]
+            },
+            "description": "Create a new vendor"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Vendors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendors",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendors"]
+            },
+            "description": "Get all vendors"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Active Vendors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendors?status=active",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendors"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "active"
+                }
+              ]
+            },
+            "description": "Get vendors filtered by status"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vendor by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendors/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendors", "1"]
+            },
+            "description": "Get vendor details with summary"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Vendor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Vendor Name\",\n  \"email\": \"newemail@vendor.com\",\n  \"payment_terms\": \"45 days\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vendors/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendors", "1"]
+            },
+            "description": "Update vendor details"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Vendor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendors/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendors", "1"]
+            },
+            "description": "Delete a vendor"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vendor Payment History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendors/1/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendors", "1", "payments"]
+            },
+            "description": "Get all payments for a vendor"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vendor Payment Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendors/1/payment-summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendors", "1", "payment-summary"]
+            },
+            "description": "Get vendor payment summary"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Vendor Orders",
+      "item": [
+        {
+          "name": "Create Vendor Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vendor_id\": 1,\n  \"po_number\": \"VO-001\",\n  \"po_date\": \"2026-02-17\",\n  \"po_value\": 50000,\n  \"due_date\": \"2026-03-17\",\n  \"description\": \"Supplies order\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects/1/vendor-orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1", "vendor-orders"]
+            },
+            "description": "Create a new vendor order for a project"
+          },
+          "response": []
+        },
+        {
+          "name": "Bulk Create Vendor Orders",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orders\": [\n    {\n      \"vendor_id\": 1,\n      \"po_number\": \"VO-002\",\n      \"po_date\": \"2026-02-17\",\n      \"po_value\": 30000,\n      \"due_date\": \"2026-03-17\"\n    },\n    {\n      \"vendor_id\": 2,\n      \"po_number\": \"VO-003\",\n      \"po_date\": \"2026-02-17\",\n      \"po_value\": 45000,\n      \"due_date\": \"2026-03-17\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects/1/vendor-orders/bulk",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1", "vendor-orders", "bulk"]
+            },
+            "description": "Create multiple vendor orders in bulk"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Vendor Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects/1/vendor-orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1", "vendor-orders"]
+            },
+            "description": "Get all vendor orders for a project"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vendor Order Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendor-orders/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendor-orders", "1"]
+            },
+            "description": "Get details of a specific vendor order"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Vendor Order",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"po_value\": 55000,\n  \"due_date\": \"2026-03-25\",\n  \"description\": \"Updated supplies order\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects/1/vendor-orders/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1", "vendor-orders", "1"]
+            },
+            "description": "Update vendor order details"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Vendor Order",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendor-orders/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendor-orders", "1"]
+            },
+            "description": "Delete a vendor order"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Vendor Payments",
+      "item": [
+        {
+          "name": "Create Vendor Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_date\": \"2026-02-17\",\n  \"amount\": 25000,\n  \"payment_mode\": \"bank_transfer\",\n  \"reference_number\": \"TXN-123456\",\n  \"notes\": \"Part payment for VO-001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vendor-orders/1/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendor-orders", "1", "payments"]
+            },
+            "description": "Record a payment for vendor order"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vendor Order Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendor-orders/1/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendor-orders", "1", "payments"]
+            },
+            "description": "Get all payments for a vendor order"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Vendor Payment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 26000,\n  \"status\": \"cleared\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vendor-payments/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendor-payments", "1"]
+            },
+            "description": "Update vendor payment details"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Vendor Payment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vendor-payments/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vendor-payments", "1"]
+            },
+            "description": "Delete a vendor payment"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Billing PO",
+      "item": [
+        {
+          "name": "Create Billing PO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"client_po_id\": 1,\n  \"billed_value\": 100000,\n  \"billed_gst\": 18000,\n  \"billing_notes\": \"Final billing for project\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects/1/billing-po",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1", "billing-po"]
+            },
+            "description": "Create a billing PO for a project"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Billing PO Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/billing-po/550e8400-e29b-41d4-a716-446655440000",
+              "host": ["{{base_url}}"],
+              "path": ["api", "billing-po", "550e8400-e29b-41d4-a716-446655440000"]
+            },
+            "description": "Get billing PO with line items"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Billing Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects/1/billing-summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1", "billing-summary"]
+            },
+            "description": "Get comprehensive billing summary for project"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Billing Line Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Labour and materials\",\n  \"qty\": 100,\n  \"rate\": 1000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/billing-po/550e8400-e29b-41d4-a716-446655440000/line-items",
+              "host": ["{{base_url}}"],
+              "path": ["api", "billing-po", "550e8400-e29b-41d4-a716-446655440000", "line-items"]
+            },
+            "description": "Add line item to billing PO"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Billing PO",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"billed_value\": 105000,\n  \"billed_gst\": 18900,\n  \"billing_notes\": \"Updated final billing\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects/1/billing-po/550e8400-e29b-41d4-a716-446655440000",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1", "billing-po", "550e8400-e29b-41d4-a716-446655440000"]
+            },
+            "description": "Update billing PO details"
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Billing PO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Approved by Finance Manager\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/billing-po/550e8400-e29b-41d4-a716-446655440000/approve",
+              "host": ["{{base_url}}"],
+              "path": ["api", "billing-po", "550e8400-e29b-41d4-a716-446655440000", "approve"]
+            },
+            "description": "Approve a billing PO"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Billing Line Item",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/billing-po/550e8400-e29b-41d4-a716-446655440000/line-items/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "billing-po", "550e8400-e29b-41d4-a716-446655440000", "line-items", "1"]
+            },
+            "description": "Delete a line item from billing PO"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Payment for PO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_date\": \"2026-02-17\",\n  \"amount\": 50000,\n  \"payment_mode\": \"bank_transfer\",\n  \"status\": \"cleared\",\n  \"payment_stage\": \"advance\",\n  \"notes\": \"Advance payment for PO\",\n  \"is_tds_deducted\": false,\n  \"tds_amount\": 0,\n  \"transaction_type\": \"credit\",\n  \"reference_number\": \"TXNREF123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/po/1/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "po", "1", "payments"]
+            },
+            "description": "Record a payment for a client PO"
+          },
+          "response": []
+        },
+        {
+          "name": "Get PO Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/po/1/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "po", "1", "payments"]
+            },
+            "description": "Get all payments for a PO"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Payment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 55000,\n  \"status\": \"bounced\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "1"]
+            },
+            "description": "Update payment details"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Payment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/payments/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "1"]
+            },
+            "description": "Delete a payment record"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Upload Document",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/document.pdf"
+                },
+                {
+                  "key": "project_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "client_po_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Project specification document",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/documents/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "documents", "upload"]
+            },
+            "description": "Upload a document with auto-compression"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project Documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects/1/documents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects", "1", "documents"]
+            },
+            "description": "Get all documents for a project"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Document by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/documents/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "documents", "1"]
+            },
+            "description": "Get document details and download links"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Document",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/documents/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "documents", "1"]
+            },
+            "description": "Delete a document"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "File Uploads",
+      "item": [
+        {
+          "name": "Create Upload Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"metadata\": {\n    \"project\": \"test\",\n    \"description\": \"Testing file upload\"\n  },\n  \"ttl_hours\": 24,\n  \"client_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session",
+              "host": ["{{base_url}}"],
+              "path": ["api", "uploads", "session"]
+            },
+            "description": "Create a new upload session"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Session Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/sess_client1_20260216_184402_8f97",
+              "host": ["{{base_url}}"],
+              "path": ["api", "uploads", "session", "sess_client1_20260216_184402_8f97"]
+            },
+            "description": "Get session with file count and metadata"
+          },
+          "response": []
+        },
+        {
+          "name": "Upload File to Session",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/BAJAJ_PO.xlsx"
+                },
+                {
+                  "key": "uploaded_by",
+                  "value": "admin",
+                  "type": "text"
+                },
+                {
+                  "key": "auto_parse",
+                  "value": "true",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/sess_client1_20260216_184402_8f97/files",
+              "host": ["{{base_url}}"],
+              "path": ["api", "uploads", "session", "sess_client1_20260216_184402_8f97", "files"]
+            },
+            "description": "Upload file to a session with optional auto-parsing"
+          },
+          "response": []
+        },
+        {
+          "name": "List Session Files",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/sess_client1_20260216_184402_8f97/files",
+              "host": ["{{base_url}}"],
+              "path": ["api", "uploads", "session", "sess_client1_20260216_184402_8f97", "files"]
+            },
+            "description": "Get all files in a session"
+          },
+          "response": []
+        },
+        {
+          "name": "Download File",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/sess_client1_20260216_184402_8f97/files/file-id-1/download",
+              "host": ["{{base_url}}"],
+              "path": ["api", "uploads", "session", "sess_client1_20260216_184402_8f97", "files", "file-id-1", "download"]
+            },
+            "description": "Download a file from session"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete File from Session",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/sess_client1_20260216_184402_8f97/files/file-id-1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "uploads", "session", "sess_client1_20260216_184402_8f97", "files", "file-id-1"]
+            },
+            "description": "Delete a file from session"
+          },
+          "response": []
+        },
+        {
+          "name": "Download All Session Files",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/sess_client1_20260216_184402_8f97/download-all",
+              "host": ["{{base_url}}"],
+              "path": ["api", "uploads", "session", "sess_client1_20260216_184402_8f97", "download-all"]
+            },
+            "description": "Download all files from session as zip"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Session Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/uploads/session/sess_client1_20260216_184402_8f97/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "uploads", "session", "sess_client1_20260216_184402_8f97", "stats"]
+            },
+            "description": "Get statistics for upload session"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ]
+}
