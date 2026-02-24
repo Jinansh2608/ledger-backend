@@ -218,14 +218,15 @@ def get_project_vendor_orders(project_id: int):
             with conn.cursor() as cur:
                 cur.execute("""
                     SELECT vo.id, vo.vendor_id, v.name as vendor_name, vo.po_number, vo.po_date, 
-                           vo.po_value, vo.due_date, vo.work_status, vo.payment_status, 
-                           vo.description, vo.created_at,
-                           COUNT(DISTINCT pvl.id) as linked_payments_count
+                           vo.po_value as amount, vo.due_date, vo.work_status, vo.payment_status, 
+                           vo.description, vo.created_at, vo.project_id,
+                           COALESCE(COUNT(DISTINCT voli.id), 0) as line_item_count
                     FROM vendor_order vo
                     JOIN vendor v ON vo.vendor_id = v.id
-                    LEFT JOIN payment_vendor_link pvl ON vo.id = pvl.vendor_order_id
+                    LEFT JOIN vendor_order_line_item voli ON vo.id = voli.vendor_order_id
                     WHERE vo.project_id = %s
-                    GROUP BY vo.id, v.name
+                    GROUP BY vo.id, vo.vendor_id, v.name, vo.po_number, vo.po_date, vo.po_value, 
+                             vo.due_date, vo.work_status, vo.payment_status, vo.description, vo.created_at, vo.project_id
                     ORDER BY vo.created_at DESC
                 """, (project_id,))
                 
