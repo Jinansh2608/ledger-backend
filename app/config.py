@@ -4,8 +4,13 @@ Uses environment variables with secure defaults
 """
 import os
 from typing import List
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 class Settings:
+
     """Application settings from environment variables"""
     
     def __init__(self):

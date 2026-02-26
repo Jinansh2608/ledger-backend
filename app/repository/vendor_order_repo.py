@@ -13,21 +13,24 @@ from typing import List, Dict, Optional
 # ==========================================
 
 def create_vendor(name: str, contact_person: str = None, email: str = None, 
-                 phone: str = None, address: str = None, payment_terms: str = None):
-    """Create a new vendor"""
+                 phone: str = None, address: str = None, payment_terms: str = None,
+                 master_type: str = None, rate_configuration: Dict = None):
+    """Create a new vendor with master configuration"""
     conn = get_db()
     try:
         with conn:
             with conn.cursor() as cur:
+                import json
                 cur.execute("""
-                    INSERT INTO vendor (name, contact_person, email, phone, address, payment_terms, status)
-                    VALUES (%s, %s, %s, %s, %s, %s, 'active')
-                    RETURNING id, name, contact_person, email, phone, address, payment_terms, status, created_at
-                """, (name, contact_person, email, phone, address, payment_terms))
+                    INSERT INTO vendor (name, contact_person, email, phone, address, payment_terms, status, master_type, rate_configuration)
+                    VALUES (%s, %s, %s, %s, %s, %s, 'active', %s, %s)
+                    RETURNING id, name, contact_person, email, phone, address, payment_terms, status, master_type, rate_configuration, created_at
+                """, (name, contact_person, email, phone, address, payment_terms, master_type, json.dumps(rate_configuration) if rate_configuration else None))
                 
                 return cur.fetchone()
     finally:
         conn.close()
+
 
 
 def get_all_vendors(status: str = None):
@@ -157,7 +160,8 @@ def update_vendor(vendor_id: int, updates: Dict):
 # ==========================================
 
 def create_vendor_order(vendor_id: int, project_id: int, po_number: str = None, po_date: date = None, 
-                       po_value: float = 0.0, due_date: date = None, description: str = None):
+                       po_value: float = 0.0, due_date: date = None, description: str = None,
+                       client_po_id: int = None):
     """Create a new vendor order"""
     conn = get_db()
     try:
@@ -166,11 +170,11 @@ def create_vendor_order(vendor_id: int, project_id: int, po_number: str = None, 
                 cur.execute("""
                     INSERT INTO vendor_order 
                     (vendor_id, project_id, po_number, po_date, po_value, due_date, description, 
-                     work_status, payment_status)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, 'pending', 'pending')
+                     work_status, payment_status, client_po_id)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, 'pending', 'pending', %s)
                     RETURNING id, vendor_id, project_id, po_number, po_date, po_value, due_date, 
-                              work_status, payment_status, description, created_at
-                """, (vendor_id, project_id, po_number, po_date, po_value, due_date, description))
+                              work_status, payment_status, description, created_at, client_po_id
+                """, (vendor_id, project_id, po_number, po_date, po_value, due_date, description, client_po_id))
                 
                 return cur.fetchone()
     finally:
@@ -217,15 +221,15 @@ def get_project_vendor_orders(project_id: int):
         with conn:
             with conn.cursor() as cur:
                 cur.execute("""
-                    SELECT vo.id, vo.vendor_id, v.name as vendor_name, vo.po_number, vo.po_date, 
+                    SELECT vo.id, vo.vendor_id, vo.project_id, v.name as vendor_name, vo.po_number, vo.po_date, 
                            vo.po_value, vo.due_date, vo.work_status, vo.payment_status, 
-                           vo.description, vo.created_at,
+                           vo.description, vo.created_at, vo.client_po_id,
                            COUNT(DISTINCT pvl.id) as linked_payments_count
                     FROM vendor_order vo
                     JOIN vendor v ON vo.vendor_id = v.id
                     LEFT JOIN payment_vendor_link pvl ON vo.id = pvl.vendor_order_id
                     WHERE vo.project_id = %s
-                    GROUP BY vo.id, v.name
+                    GROUP BY vo.id, v.name, vo.client_po_id
                     ORDER BY vo.created_at DESC
                 """, (project_id,))
                 
@@ -310,6 +314,9 @@ def update_vendor_order(vendor_order_id: int, updates: Dict):
                 if 'payment_status' in updates:
                     update_fields.append("payment_status = %s")
                     values.append(updates['payment_status'])
+                if 'client_po_id' in updates:
+                    update_fields.append("client_po_id = %s")
+                    values.append(updates['client_po_id'])
                 
                 if len(update_fields) == 1:
                     return get_vendor_order_details(vendor_order_id)

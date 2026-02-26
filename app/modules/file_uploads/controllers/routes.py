@@ -2,7 +2,7 @@
 FastAPI routes for file upload system
 """
 
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Query, Request, Form
 from fastapi.responses import FileResponse, StreamingResponse
 from typing import Optional, List
 from app.modules.file_uploads.schemas.requests import (
@@ -220,13 +220,12 @@ async def upload_file(
 
 @router.post("/po/upload", response_model=ParsedPOResponse)
 async def upload_and_parse_po(
-    client_id: int = Query(..., ge=1, description="Client ID (Bajaj=1, Dava India=2)"),
-    project_id: Optional[int] = Query(None, description="Optional Project ID to link PO"),
-    project_name: Optional[str] = Query(None, description="Optional Project Name to link/create"),
-    request_obj: Request = None,
-    file: UploadFile = File(...),
-    uploaded_by: Optional[str] = Query(None),
-    auto_save: bool = Query(True, description="Automatically save parsed PO to database")
+    file: UploadFile = File(..., description="The PO file to upload (Excel or PDF)"),
+    client_id: int = Form(..., ge=1, description="Client ID (Bajaj=1, Dava India=2)"),
+    project_id: Optional[int] = Form(None, description="Optional Project ID to link PO"),
+    project_name: Optional[str] = Form(None, description="Optional Project Name to link/create"),
+    uploaded_by: Optional[str] = Form(None),
+    auto_save: bool = Form(True, description="Automatically save parsed PO to database")
 ):
     """
     Upload a PO Excel file and automatically parse it based on client

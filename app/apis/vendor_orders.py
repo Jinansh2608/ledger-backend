@@ -30,6 +30,7 @@ class VendorOrderRequest(BaseModel):
     amount: Optional[float] = None
     due_date: Optional[date] = None
     description: Optional[str] = None
+    client_po_id: Optional[int] = None
 
 
 class VendorOrderUpdateRequest(BaseModel):
@@ -40,11 +41,13 @@ class VendorOrderUpdateRequest(BaseModel):
     work_status: Optional[str] = None
     status: Optional[str] = None
     payment_status: Optional[str] = None
+    client_po_id: Optional[int] = None
 
 
 class VendorOrderStatusRequest(BaseModel):
     work_status: Optional[str] = None
     payment_status: Optional[str] = None
+    client_po_id: Optional[int] = None
 
 
 class LineItemRequest(BaseModel):
@@ -86,7 +89,8 @@ def create_order(project_id: int, order: VendorOrderRequest):
             po_date=order.po_date,
             po_value=final_value,
             due_date=order.due_date,
-            description=order.description
+            description=order.description,
+            client_po_id=order.client_po_id
         )
         return {
             "status": "SUCCESS",
