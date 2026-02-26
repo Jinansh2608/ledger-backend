@@ -9,7 +9,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from app.apis import health, auth
 from app.apis import bajaj_po, client_po, po_management, proforma_invoice, documents, payments
-from app.apis import vendors, vendor_orders, vendor_payment_links, vendor_payments, billing_po, projects
+from app.apis import vendors, vendor_orders, vendor_payment_links, vendor_payments, billing_po, projects, quotations
+
 from app.modules.file_uploads.controllers.routes import router as file_uploads_router
 from app.config import settings
 from app.logger import get_logger
@@ -101,7 +102,9 @@ app.include_router(vendor_payment_links.router)
 app.include_router(vendor_payments.router)
 app.include_router(billing_po.router)
 app.include_router(projects.router)
+app.include_router(quotations.router)
 app.include_router(file_uploads_router, prefix="/api")
+
 
 # Mount uploads directory to serve compressed files and session files
 uploads_path = os.path.join(os.path.dirname(__file__), '..', 'uploads')

@@ -5,13 +5,12 @@ Uses environment variables with secure defaults
 import os
 from typing import List
 from dotenv import load_dotenv
-from pathlib import Path
 
-# Load .env file
-env_file = Path(__file__).resolve().parent.parent / '.env'
-load_dotenv(env_file)
+# Load environment variables from .env file
+load_dotenv()
 
 class Settings:
+
     """Application settings from environment variables"""
     
     def __init__(self):

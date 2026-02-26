@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List, Dict
 
 from app.repository.vendor_order_repo import (
     create_vendor,
@@ -23,6 +23,9 @@ class VendorRequest(BaseModel):
     phone: Optional[str] = None
     address: Optional[str] = None
     payment_terms: Optional[str] = None
+    master_type: Optional[str] = None
+    rate_configuration: Optional[List[Dict]] = None
+
 
 
 class VendorUpdateRequest(BaseModel):
@@ -44,8 +47,11 @@ def create_new_vendor(vendor: VendorRequest):
             email=vendor.email,
             phone=vendor.phone,
             address=vendor.address,
-            payment_terms=vendor.payment_terms
+            payment_terms=vendor.payment_terms,
+            master_type=vendor.master_type,
+            rate_configuration=vendor.rate_configuration
         )
+
         return {
             "status": "SUCCESS",
             "message": "Vendor created",

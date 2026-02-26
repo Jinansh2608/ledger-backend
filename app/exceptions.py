@@ -81,7 +81,14 @@ def register_error_handlers(app: FastAPI):
                 "type": error["type"]
             })
         
-        logger.warning(f"Validation Error: {len(errors)} errors in request to {request.url.path}")
+        # Log more details for debugging
+        try:
+            query_params = dict(request.query_params)
+            headers = dict(request.headers)
+            # We can't easily read form data here as it might be consumed
+            logger.warning(f"Validation Error: {len(errors)} errors in request to {request.url.path}. Path: {request.url.path}, Query: {query_params}, Headers: {headers}")
+        except:
+            logger.warning(f"Validation Error: {len(errors)} errors in request to {request.url.path}")
         
         return JSONResponse(
             status_code=422,

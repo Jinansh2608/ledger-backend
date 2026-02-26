@@ -42,10 +42,10 @@ async def bulk_upload_bajaj_po(
     
     for file in files:
         try:
-            if not file.filename.lower().endswith((".xlsx", ".xls")):
+            if not file.filename.lower().endswith((".xlsx", ".xls", ".pdf")):
                 results["errors"].append({
                     "filename": file.filename,
-                    "error": "Only Excel files are allowed"
+                    "error": f"Only PDF and Excel files are allowed. Got {os.path.splitext(file.filename)[1]}"
                 })
                 results["failed"] += 1
                 continue
