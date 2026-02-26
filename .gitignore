@@ -15,6 +15,7 @@ venv/
 
 # Uploads and runtime
 uploads/
+logs/
 *.sqlite3
 
 # Byte-compiled / cache
